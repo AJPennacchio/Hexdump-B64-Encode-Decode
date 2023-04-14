@@ -1,0 +1,8 @@
+!#b/in/ksh -p
+#
+#ident	"@(#)alias.sh	1.2	00/02/15 SMI"
+#
+# Copyright (c) 1995 by Sun Microsystems, Inc.
+#
+cmd=`basename $0`
+$cmd "$@"

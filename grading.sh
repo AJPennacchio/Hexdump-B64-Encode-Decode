@@ -33,7 +33,7 @@
 # +--------------+
 # | Plus points: |
 # +--------------+
- 
+
 # Documentation    : +3 points (comments in code plus README)
 
 # (A) Hexdump : +15 points

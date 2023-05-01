@@ -163,7 +163,6 @@ int dec_base64(FILE *fp) {
     int num_bytes = fread(&buffer, sizeof(char), 4, fp);
 
     while(num_bytes > 0){
-//        printf("Current buffer: %s\n", buffer);
         //convert base64 characters to index of base64 table
         for(int i = 0; i < num_bytes; i++){
 
@@ -177,6 +176,11 @@ int dec_base64(FILE *fp) {
                     num_bytes--;
                     break;
                 }
+                //cannot decrypt if cipher character is not in base64 table
+                  else if(j == 63){
+                  printf("Invalid non-base64 character: %c, cannot decrypt.\n", buffer[i]);
+                  return -1;
+          }
             }
         }
         //perform decryption, base64 characters converted to 8 bit characters.
@@ -213,15 +217,12 @@ int dec_base64(FILE *fp) {
             for (int i = newLineCharIndex; i < 3; i++) {
                 buffer[i] = buffer[i+1];
             }
-//            printf("Before: %s\n", buffer);
 
             fread(&buffer[3], sizeof(char), 1, fp);
             foundNewLine = 0;
-//            printf("After: %s\n", buffer);
         }
     }
 
-//    printf("\n");
     fclose(fp);
     return 0;
 

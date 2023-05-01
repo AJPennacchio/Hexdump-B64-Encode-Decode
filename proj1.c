@@ -17,16 +17,17 @@ void usage(){
 }
 
 int main(int argc, char *argv[]){
-  // usage();
+
   // Check command arg first
   // Check if file arg is valid and then open file
   // Then pass file ptr to methods
 
-//  printf("arg 0: (%s)\n", argv[0]);
-//  printf("arg 1: (%s)\n", argv[1]);
-//  printf("arg 2: (%s)\n", argv[2]);
-//  printf("argc: (%d)\n", argc);
-//  printf("argv: (%s)\n", *argv);
+    if(argc != 3){
+        printf("Error: expected 2 parameters but got %d\n", argc - 1);
+        usage();
+        return -1;
+    }
+
   char hdOption[] = "hexdump";
   char ebOption[] = "enc-base64";
   char dbOption[] = "dec-base64";
@@ -59,6 +60,8 @@ int main(int argc, char *argv[]){
   } else if (strcmp(argv[1], dbOption) == 0) {
       dec_base64(fp);
   } else {
+        printf("Invalid function");
+        usage();
       return 1;
   }
 

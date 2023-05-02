@@ -163,6 +163,7 @@ int dec_base64(FILE *fp) {
     int letter = 0;
     int padding = 0;
 
+    //read 4 characters at a time, skipping white space
     for(int i = 0; i < 4; i++){
         letter = getc(fp);
        
@@ -172,6 +173,7 @@ int dec_base64(FILE *fp) {
         buffer[i] = letter;
     }
     
+    //while not at end of file
     while(letter != EOF){
         //convert base64 characters to index of base64 table
         for(int i = 0; i < 4; i++){
@@ -188,6 +190,11 @@ int dec_base64(FILE *fp) {
                     break;
                 }
 
+                if(j == 63){
+                    printf("Error: Invalid b64 character. Cannot decrypt. \n");
+                    return 1;
+                }
+
             }
         }
         //perform decryption, base64 characters converted to 8 bit characters.
@@ -195,6 +202,7 @@ int dec_base64(FILE *fp) {
         dec[1] = ((buffer[1] & 0b1111) << 4) + ((buffer[2] & 0b111100) >> 2);
         dec[2] = ((buffer[2] & 0b11) << 6) + buffer[3];
 
+        //do not want to print padding
         if(padding == 2){
             printf("%c", dec[0]); 
             
@@ -211,13 +219,14 @@ int dec_base64(FILE *fp) {
        
         
 
-        
+        //read next 4 characters. skip whitespace. 
         for(int i = 0; i < 4; i++){
             letter = getc(fp);
         
             while(letter == '\n' || letter == ' '){
                 letter = getc(fp);
             }
+
 
             buffer[i] = letter;
         }

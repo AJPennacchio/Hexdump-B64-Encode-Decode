@@ -21,51 +21,46 @@ int main(int argc, char *argv[]){
   // Check command arg first
   // Check if file arg is valid and then open file
   // Then pass file ptr to methods
-
-    /*
-    if(argc != 3){
-        printf("Error: expected 2 parameters but got %d\n", argc - 1);
-        usage();
-        return -1;
-    }
-    */
+    
   char hdOption[] = "hexdump";
   char ebOption[] = "enc-base64";
   char dbOption[] = "dec-base64";
-
-  if (strcmp(argv[1], "\0") == 0 || argv[1] == NULL || strcmp(argv[0], "\0") == 0 || argv[0] == NULL) {
-      return 1;
-  }
-
   FILE *fp;
 
-  if (argv[2] == 0 && stdin == NULL) {
-      printf("no file argument supplied\n");
-      return 1;
-  } else if (argv[2] != 0) {
-      fp = fopen(argv[2], "rb");
-  } else {
-      fp = stdin;
-  }
+    //if passing a file
+    if(argc == 3){
+        fp = fopen(argv[2], "rb");
 
-  if (fp == NULL) {
-      printf("file not found\n");
-      return 1;
-  }
+        //check to see if file can be opened
+         if (fp == NULL) {
+            printf("Error: File not found. \n");
+            return 1;
+         }
+        
+    //if using stdin
+    } else if(argc == 2){
+         fp = stdin;
 
+    //else generate an error
+    } else{
+        printf("Error: Improper number of parameters supplied. \n"); 
+        return 1;
+    }
 
-  if (strcmp(argv[1], hdOption) == 0) {
+    //call function based on parameters supplied or generate error
+    if (strcmp(argv[1], hdOption) == 0) {
       hexdump(fp);
-  } else if (strcmp(argv[1], ebOption) == 0) {
+    } else if (strcmp(argv[1], ebOption) == 0) {
       enc_base64(fp);
-  } else if (strcmp(argv[1], dbOption) == 0) {
+    } else if (strcmp(argv[1], dbOption) == 0) {
       dec_base64(fp);
-  } else {
-        printf("Invalid function");
-        usage();
-      return 1;
-  }
+     } else {
+        printf("Error: Invalid function. \n");
+        return 1;
+    }
+
 
   return 0;
+    
 }
 

@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
 
         //check to see if file can be opened
          if (fp == NULL) {
-            printf("Error: File not found. \n");
+             fprintf(stderr, "Error: File not found. \n");
             return 1;
          }
         
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
 
     //else generate an error
     } else{
-        printf("Error: Improper number of parameters supplied. \n"); 
+        fprintf(stderr, "Error: Improper number of parameters supplied. \n");
         return 1;
     }
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
     } else if (strcmp(argv[1], dbOption) == 0) {
       dec_base64(fp);
      } else {
-        printf("Error: Invalid function. \n");
+        fprintf(stderr, "Error: Invalid function. \n");
         return 1;
     }
 

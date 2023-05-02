@@ -162,6 +162,7 @@ int dec_base64(FILE *fp) {
     unsigned char dec[3];
     int letter = 0;
     int padding = 0;
+    int count = 0;
 
     //read 4 characters at a time, skipping white space
     for(int i = 0; i < 4; i++){
@@ -171,6 +172,10 @@ int dec_base64(FILE *fp) {
             letter = getc(fp);
         }
         buffer[i] = letter;
+        // want an accurate count to ensure string is multiple of 4 and valid
+        if (buffer[i] != '\0' && buffer[i] != 255) {
+            count++;
+        }
     }
     
     //while not at end of file
@@ -191,7 +196,7 @@ int dec_base64(FILE *fp) {
                 }
 
                 if(j == 63){
-                    printf("Error: Invalid b64 character. Cannot decrypt. \n");
+                    fprintf(stderr, "Error: Invalid b64 character. Cannot decrypt. \n");
                     return 1;
                 }
 
@@ -204,12 +209,12 @@ int dec_base64(FILE *fp) {
 
         //do not want to print padding
         if(padding == 2){
-            printf("%c", dec[0]); 
-            
+            printf("%c", dec[0]);
+
         } else if(padding == 1){
-            printf("%c", dec[0]); 
-            printf("%c", dec[1]); 
-            
+            printf("%c", dec[0]);
+            printf("%c", dec[1]);
+
         } else{
             for(int i = 0; i < 3; i++){
                 printf("%c", dec[i]);
@@ -229,8 +234,16 @@ int dec_base64(FILE *fp) {
 
 
             buffer[i] = letter;
+            // want an accurate count to ensure string is multiple of 4 and valid
+            if (buffer[i] != '\0' && buffer[i] != 255) {
+                count++;
+            }
         }
+    }
 
+    if (count % 4 != 0) {
+        fprintf(stderr, "Error: Invalid base64 string, not a multiple of 4 — padding needed.\n");
+        return 1;
     }
 
     fclose(fp);

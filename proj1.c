@@ -22,12 +22,13 @@ int main(int argc, char *argv[]){
   // Check if file arg is valid and then open file
   // Then pass file ptr to methods
 
+    /*
     if(argc != 3){
         printf("Error: expected 2 parameters but got %d\n", argc - 1);
         usage();
         return -1;
     }
-
+    */
   char hdOption[] = "hexdump";
   char ebOption[] = "enc-base64";
   char dbOption[] = "dec-base64";

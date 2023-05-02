@@ -160,11 +160,21 @@ int dec_base64(FILE *fp) {
     //buffer for reading 4 base64 chars into, dec for holding decrypted chars
     unsigned char buffer[4];
     unsigned char dec[3];
-    int num_bytes = fread(&buffer, sizeof(char), 4, fp);
+    int letter = 0;
+    int padding = 0;
 
-    while(num_bytes > 0){
+    for(int i = 0; i < 4; i++){
+        letter = getc(fp);
+       
+        while(letter == '\n' || letter == ' '){
+            letter = getc(fp);
+        }
+        buffer[i] = letter;
+    }
+    
+    while(letter != EOF){
         //convert base64 characters to index of base64 table
-        for(int i = 0; i < num_bytes; i++){
+        for(int i = 0; i < 4; i++){
 
             for(int j = 0; j < 64; j++){
                 if(buffer[i] == b64_table[j]){
@@ -173,14 +183,11 @@ int dec_base64(FILE *fp) {
                 }
                 //do not want to process padding
                 if(buffer[i] == 0x3D){
-                    num_bytes--;
+                    buffer[i] = '=';
+                    padding++;
                     break;
                 }
-                //cannot decrypt if cipher character is not in base64 table
-                  else if(j == 63){
-                  printf("Invalid non-base64 character: %c, cannot decrypt.\n", buffer[i]);
-                  return -1;
-          }
+
             }
         }
         //perform decryption, base64 characters converted to 8 bit characters.
@@ -188,39 +195,33 @@ int dec_base64(FILE *fp) {
         dec[1] = ((buffer[1] & 0b1111) << 4) + ((buffer[2] & 0b111100) >> 2);
         dec[2] = ((buffer[2] & 0b11) << 6) + buffer[3];
 
-        //check size of num_bytes to see if any padding, then print accordingly
-        if(num_bytes == 2){
-            printf("%c", dec[0]);
-        } else if(num_bytes == 3){
-            printf("%c%c", dec[0], dec[1]);
-        } else if (num_bytes == 4) {
+        if(padding == 2){
+            printf("%c", dec[0]); 
+            
+        } else if(padding == 1){
+            printf("%c", dec[0]); 
+            printf("%c", dec[1]); 
+            
+        } else{
             for(int i = 0; i < 3; i++){
                 printf("%c", dec[i]);
             }
         }
+        
+       
+        
 
-        //read current line into buffer, number of characters read stores in num_bytes
-        num_bytes = fread(&buffer, sizeof(char), 4, fp);
-
-        // getting unexpected newlines from fread for unknown reason
-        // since we are going 3 bytes at a time (instead of 1 line), have to preprocess
-        int foundNewLine = 0;
-        int newLineCharIndex;
-        for (int i = 0; i < 3; i++) {
-            if (buffer[i] == '\n') {
-                foundNewLine = 1;
-                newLineCharIndex = i;
-            }
-        }
-
-        if (foundNewLine == 1) {
-            for (int i = newLineCharIndex; i < 3; i++) {
-                buffer[i] = buffer[i+1];
+        
+        for(int i = 0; i < 4; i++){
+            letter = getc(fp);
+        
+            while(letter == '\n' || letter == ' '){
+                letter = getc(fp);
             }
 
-            fread(&buffer[3], sizeof(char), 1, fp);
-            foundNewLine = 0;
+            buffer[i] = letter;
         }
+
     }
 
     fclose(fp);
